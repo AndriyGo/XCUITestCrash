@@ -1,0 +1,14 @@
+/build
+screenshots/
+xcuserdata/
+*.xcuserstate
+report.xml
+/Carthage
+*.dSYM.zip
+.DS_Store
+Cartfile.resolved
+Pods/
+Podfile.lock
+*.ipa
+node_modules
+*lock.json

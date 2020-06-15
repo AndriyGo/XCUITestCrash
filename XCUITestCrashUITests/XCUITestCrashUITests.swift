@@ -8,6 +8,21 @@
 
 import XCTest
 
+extension XCUIElement {
+
+    func swipeRight() {
+        let half: CGFloat = 0.5
+        let adjustment: CGFloat = 0.45
+        let pressDuration: TimeInterval = 0.05
+        let moreThanHalf = half + adjustment
+
+        let centre = self.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: half))
+        let rightOfCentre = self.coordinate(withNormalizedOffset: CGVector(dx: moreThanHalf, dy: half))
+
+        centre.press(forDuration: pressDuration, thenDragTo: rightOfCentre)
+    }
+}
+
 class XCUITestCrashUITests: XCTestCase {
 
     override func setUpWithError() throws {
@@ -27,7 +42,42 @@ class XCUITestCrashUITests: XCTestCase {
         // UI tests must launch the application that they test.
         let app = XCUIApplication()
         app.launch()
-
+        app.activate()
+        // Open Today View
+        let bottomPoint = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 2))
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0)).press(forDuration: 0.1, thenDragTo: bottomPoint)
+        sleep(1)
+        
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        springboard.scrollViews.firstMatch.swipeRight()
+        sleep(1)
+        springboard.scrollViews.firstMatch.swipeUp()
+        springboard.scrollViews.firstMatch.tap(withNumberOfTaps: 1, numberOfTouches: 1)
+        sleep(2)
+        var button: XCUIElement?
+        
+        for b in springboard.buttons.allElementsBoundByAccessibilityElement {
+            if button == nil {
+                if b.identifier != "camera-orb-button" {
+                    button = b
+                }
+            }
+            else {
+                if b.frame.origin.y > button!.frame.origin.y {
+                    button = b
+                }
+            }
+        }
+        let spotlight = XCUIApplication(bundleIdentifier: "com.apple.Spotlight")
+        XCUIApplication(bundleIdentifier: "com.apple.Reminders").terminate()
+        spotlight.terminate()
+        app.terminate()
+        sleep(2)
+        if let b = button {
+            sleep(1)
+            b.tap()
+        }
+        sleep(1)
         // Use recording to get started writing UI tests.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
