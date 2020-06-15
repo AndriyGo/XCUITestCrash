@@ -52,31 +52,10 @@ class XCUITestCrashUITests: XCTestCase {
         springboard.scrollViews.firstMatch.swipeRight()
         sleep(1)
         springboard.scrollViews.firstMatch.swipeUp()
-        springboard.scrollViews.firstMatch.tap(withNumberOfTaps: 1, numberOfTouches: 1)
         sleep(2)
-        var button: XCUIElement?
+        springboard.buttons["Edit"].press(forDuration: 1)
         
-        for b in springboard.buttons.allElementsBoundByAccessibilityElement {
-            if button == nil {
-                if b.identifier != "camera-orb-button" {
-                    button = b
-                }
-            }
-            else {
-                if b.frame.origin.y > button!.frame.origin.y {
-                    button = b
-                }
-            }
-        }
-        let spotlight = XCUIApplication(bundleIdentifier: "com.apple.Spotlight")
-        XCUIApplication(bundleIdentifier: "com.apple.Reminders").terminate()
-        spotlight.terminate()
-        app.terminate()
         sleep(2)
-        if let b = button {
-            sleep(1)
-            b.tap()
-        }
         sleep(1)
         // Use recording to get started writing UI tests.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
